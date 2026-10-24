@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Quản Lý Thi Toàn Diện</title>
+    <title>Hệ Thống Đăng Nhập & Thi</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; user-select: none; }
         .auth-box { max-width: 400px; margin: 80px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .auth-box h2 { text-align: center; margin-bottom: 20px; color: #1976d2; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         .btn { background: #1976d2; color: white; padding: 12px; width: 100%; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 16px; }
         .btn:hover { background: #1565c0; }
-        .link-toggle { text-align: center; margin-top: 15px; font-size: 14px; color: #1976d2; cursor: pointer; text-decoration: underline; }
+        .link-toggle { text-align: center; margin-top: 15px; font-size: 14px; }
+        .link-toggle a { color: #1976d2; text-decoration: underline; }
         .exam-page { display: none; max-width: 800px; margin: 120px auto 20px; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .anti-cheat-header { position: fixed; top: 0; left: 0; right: 0; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 15px 30px; display: none; justify-content: space-between; align-items: center; z-index: 1000; border-bottom: 3px solid #d32f2f; }
         .violation-box { background: #ffebee; color: #c62828; padding: 5px 15px; border-radius: 4px; font-weight: bold; }
@@ -25,28 +26,17 @@
 <body>
 
     <div id="auth-container" class="auth-box">
-        <h2 id="auth-title">ĐĂNG NHẬP</h2>
-        <div class="form-group" id="name-group" style="display: none;">
-            <label>Họ và Tên</label>
-            <input type="text" id="auth-name" placeholder="Nguyễn Văn A">
-        </div>
+        <h2>ĐĂNG NHẬP</h2>
         <div class="form-group">
             <label>Email</label>
             <input type="email" id="auth-email" placeholder="example@gmail.com">
         </div>
-        <div class="form-group" id="pass-group">
+        <div class="form-group">
             <label>Mật khẩu (Nhận qua Gmail khi duyệt)</label>
             <input type="password" id="auth-password" placeholder="******">
         </div>
-        <div class="form-group" id="role-group" style="display: none;">
-            <label>Bạn là:</label>
-            <select id="auth-role">
-                <option value="student">Thí sinh dự thi</option>
-                <option value="teacher">Giảng viên chấm bài</option>
-            </select>
-        </div>
-        <button class="btn" id="btn-auth" onclick="submitAuth()">ĐĂNG NHẬP</button>
-        <div class="link-toggle" id="toggle-link" onclick="toggleAuthMode()">Chưa có tài khoản? Đăng ký ngay</div>
+        <button class="btn" id="btn-login" onclick="submitLogin()">ĐĂNG NHẬP</button>
+        <div class="link-toggle"><a href="register.html">Chưa có tài khoản? Đăng ký ngay</a></div>
     </div>
 
     <div id="start-overlay" class="overlay">
@@ -60,92 +50,55 @@
     <div class="anti-cheat-header" id="monitor-header">
         <div id="user-display">Thí sinh: </div>
         <div class="violation-box" id="violation-msg">Số lần chuyển tab: 0/3</div>
-        <div style="font-size:20px; font-weight:bold; color:#d32f2f;" id="timer">45:00</div>
+        <div style="font-size:20px; font-weight:bold; color:#d32f2f;">45:00</div>
     </div>
 
     <div id="exam-container" class="exam-page">
         <h2 style="text-align: center; color: #555;">Đang tải cấu trúc đề thi an toàn...</h2>
     </div>
+
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxh62HBTEb2Sj1bisyTUQck_I826Og0sYmolRuO212XIeq58TjGALwbudtJI-dToyBm/exec';
-    
-    let isRegisterMode = false;
+    const API_URL = 'https://google.com';
     let currentUserEmail = "";
     let violationCount = 0;
 
-    function toggleAuthMode() {
-        isRegisterMode = !isRegisterMode;
-        if (isRegisterMode) {
-            document.getElementById("auth-title").innerText = "ĐĂNG KÝ HỆ THỐNG";
-            document.getElementById("name-group").style.display = "block";
-            document.getElementById("role-group").style.display = "block";
-            document.getElementById("pass-group").style.display = "none";
-            document.getElementById("btn-auth").innerText = "GỬI YÊU CẦU ĐĂNG KÝ";
-            document.getElementById("toggle-link").innerText = "Đã có tài khoản? Đăng nhập ngay";
-        } else {
-            document.getElementById("auth-title").innerText = "ĐĂNG NHẬP";
-            document.getElementById("name-group").style.display = "none";
-            document.getElementById("role-group").style.display = "none";
-            document.getElementById("pass-group").style.display = "block";
-            document.getElementById("btn-auth").innerText = "ĐĂNG NHẬP";
-            document.getElementById("toggle-link").innerText = "Chưa có tài khoản? Đăng ký ngay";
-        }
-    }
-
-    async function submitAuth() {
+    async function submitLogin() {
         const email = document.getElementById("auth-email").value.trim();
-        const name = document.getElementById("auth-name").value.trim();
         const password = document.getElementById("auth-password").value.trim();
-        const role = document.getElementById("auth-role").value;
 
-        if (!email) { alert("Vui lòng nhập Email!"); return; }
+        if (!email || !password) { alert("Vui lòng điền đầy đủ thông tin đăng nhập!"); return; }
 
-        document.getElementById("btn-auth").innerText = "Vui lòng đợi...";
-        document.getElementById("btn-auth").disabled = true;
+        document.getElementById("btn-login").innerText = "Đang xác thực...";
+        document.getElementById("btn-login").disabled = true;
 
         try {
-            if (isRegisterMode) {
-                if (!name) { alert("Vui lòng điền Họ tên!"); restoreButton(); return; }
-                await fetch(API_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ action: "register", email: email, fullName: name, role: role })
-                });
-                alert("Yêu cầu đã gửi! Vui lòng chờ phê duyệt để nhận mật khẩu qua Gmail.");
-                toggleAuthMode();
-            } else {
-                if (!password) { alert("Vui lòng điền Mật khẩu!"); restoreButton(); return; }
-                let res = await fetch(API_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ action: "login", email: email, password: password })
-                });
-                let data = await res.json();
-                if (data.status === "success") {
-                    currentUserEmail = email;
-                    document.getElementById("auth-container").style.display = "none";
-                    if (data.role === "student") {
-                        document.getElementById("start-overlay").style.display = "flex";
-                    } else {
-                        alert("Xin chào Giảng viên!");
-                        document.getElementById("exam-container").style.display = "block";
-                        document.getElementById("exam-container").innerHTML = "<h2>Khu vực Giảng viên</h2><p>Hệ thống đã gửi link quản lý về hòm thư của bạn.</p>";
-                    }
+            let res = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "login", email: email, password: password })
+            });
+            let data = await res.json();
+            
+            if (data.status === "success") {
+                currentUserEmail = email;
+                document.getElementById("auth-container").style.display = "none";
+                if (data.role === "student") {
+                    document.getElementById("start-overlay").style.display = "flex";
                 } else {
-                    alert(data.message);
+                    alert("Xin chào Giảng viên!");
+                    document.getElementById("exam-container").style.display = "block";
+                    document.getElementById("exam-container").innerHTML = "<h2>Khu vực Giảng viên</h2><p>Hệ thống quản lý điểm thi đã được gửi trực tiếp về Email của bạn.</p>";
                 }
+            } else {
+                alert(data.message);
+                document.getElementById("btn-login").innerText = "ĐĂNG NHẬP";
+                document.getElementById("btn-login").disabled = false;
             }
         } catch (err) {
-            alert("Lỗi kết nối máy chủ!");
-        } finally {
-            restoreButton();
+            alert("Lỗi kết nối máy chủ đăng nhập!");
+            document.getElementById("btn-login").innerText = "ĐĂNG NHẬP";
+            document.getElementById("btn-login").disabled = false;
         }
-    }
-
-    function restoreButton() {
-        document.getElementById("btn-auth").disabled = false;
-        document.getElementById("btn-auth").innerText = isRegisterMode ? "GỬI YÊU CẦU ĐĂNG KÝ" : "ĐĂNG NHẬP";
     }
 
     async function startSecureExam() {
