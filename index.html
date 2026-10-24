@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Thi Toàn Diện</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; user-select: none; }
+        .auth-box { max-width: 400px; margin: 80px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .auth-box h2 { text-align: center; margin-bottom: 20px; color: #1976d2; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn { background: #1976d2; color: white; padding: 10px; width: 100%; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .link-toggle { text-align: center; margin-top: 15px; font-size: 14px; color: #555; cursor: pointer; }
+        
+        /* Giao diện phòng thi */
+        .exam-page { display: none; max-width: 800px; margin: 120px auto 20px; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .anti-cheat-header { position: fixed; top: 0; left: 0; right: 0; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 15px 30px; display: none; justify-content: space-between; align-items: center; z-index: 1000; border-bottom: 3px solid #d32f2f; }
+        .violation-box { background: #ffebee; color: #c62828; padding: 5px 15px; border-radius: 4px; font-weight: bold; }
+        .question-box { margin-bottom: 25px; padding: 20px; background: #fafafa; border-radius: 8px; border: 1px solid #eaeaea; }
+        .choice-label { display: block; padding: 8px; margin: 5px 0; background: #fff; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: none; justify-content: center; align-items: center; color: white; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <!-- KHU VỰC ĐĂNG NHẬP / ĐĂNG KÝ -->
+    <div id="auth-container" class="auth-box">
+        <h2 id="auth-title">ĐĂNG NHẬP</h2>
+        <div class="form-group" id="name-group" style="display: none;">
+            <label>Họ và Tên</label>
+            <input type="text" id="auth-name" placeholder="Nguyễn Văn A">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="auth-email" placeholder="example@gmail.com">
+        </div>
+        <div class="form-group" id="pass-group">
+            <label>Mật khẩu (Nhận qua Gmail khi duyệt)</label>
+            <input type="password" id="auth-password" placeholder="******">
+        </div>
+        <div class="form-group" id="role-group" style="display: none;">
+            <label>Bạn là:</label>
+            <select id="auth-role">
+                <option value="student">Thí sinh dự thi</option>
+                <option value="teacher">Giảng viên chấm bài</option>
+            </select>
+        </div>
+        <button class="btn" id="btn-auth" onclick="submitAuth()">ĐĂNG NHẬP</button>
+        <div class="link-toggle" id="toggle-link" onclick="toggleAuthMode()">Chưa có tài khoản? Đăng ký ngay</div>
+    </div>
+
+    <!-- MÀN HÌNH KHÓA THI -->
+    <div id="start-overlay" class="overlay">
+        <div style="max-width: 500px; padding: 20px;">
+            <h2>KỲ THI KHÓA TOÀN MÀN HÌNH</h2>
+            <p>Hệ thống tự động ghi nhận nếu bạn chuyển tab hoặc thoát chế độ toàn màn hình.</p>
+            <button class="btn" style="background:#2e7d32; padding:15px;" onclick="startSecureExam()">VÀO PHÒNG THI</button>
+        </div>
+    </div>
+
+    <!-- CẤU TRÚC GIÁM SÁT KHI THI -->
+    <div class="anti-cheat-header" id="monitor-header">
+        <div id="user-display">Thí sinh: </div>
+        <div class="violation-box" id="violation-msg">Số lần chuyển tab: 0/3</div>
+        <div style="font-size:20px; font-weight:bold; color:#d32f2f;" id="timer">45:00</div>
+    </div>
+
+    <!-- VÙNG LÀM BÀI THI -->
+    <div id="exam-container" class="exam-page">
+        <h2 style="text-align: center; color: #555;">Đang tải cấu trúc đề thi an toàn...</h2>
+    </div>
+
+<script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz7SWltybRYFUopJTPdrtNb1S6OBbvticEhYqJYdmu3vMWHrDMlLKrBx01oLcxGtXol/exec';
+    let isRegisterMode = false;
+    let currentUserEmail = "";
+    let violationCount = 0;
+
+    function toggleAuthMode() {
+        isRegisterMode = !isRegisterMode;
+        document.getElementById("auth-title").innerText = isRegisterMode ? "ĐĂNG KÝ HỆ THỐNG" : "ĐĂNG NHẬP";
+        document.getElementById("name-group").style.display = isRegisterMode ? "block" : "none";
+        document.getElementById("role-group").style.display = isRegisterMode ? "block" : "none";
+        document.getElementById("pass-group").style.display = isRegisterMode ? "none" : "block";
+        document.getElementById("btn-auth").innerText = isRegisterMode ? "GỬI YÊU CẦU ĐĂNG KÝ" : "ĐĂNG NHẬP";
+        document.getElementById("toggle-link").innerText = isRegisterMode ? "Đã có tài khoản? Đăng nhập" : "Chưa có tài khoản? Đăng ký ngay";
+    }
+
+    async function submitAuth() {
+        const email = document.getElementById("auth-email").value;
+        const name = document.getElementById("auth-name").value;
+        const password = document.getElementById("auth-password").value;
+        const role = document.getElementById("auth-role").value;
+
+        if(!email) return alert("Vui lòng điền Email!");
+
+        if (isRegisterMode) {
+            let res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "register", email: email, fullName: name, role: role }) });
+            let data = await res.json();
+            alert(data.message);
+            if(data.status === "success") toggleAuthMode();
+        } else {
+            let res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "login", email: email, password: password }) });
+            let data = await res.json();
+            if(data.status === "success") {
+                currentUserEmail = email;
+                document.getElementById("auth-container").style.display = "none";
+                if(data.role === "student") {
+                    document.getElementById("start-overlay").style.display = "flex";
+                } else {
+                    alert("Xin chào Giảng viên! Vui lòng kiểm tra mã chấm bài trong hòm thư Gmail.");
+                    document.getElementById("exam-container").style.display = "block";
+                    document.getElementById("exam-container").innerHTML = "<h2>Khu vực làm việc của Giảng viên</h2><p>Vui lòng mở Google Sheet đính kèm của hệ thống để tiến hành chấm điểm tự luận theo danh sách.</p>";
+                }
+            } else {
+                alert(data.message);
+            }
+        }
+    }
+
+    async function startSecureExam() {
+        document.getElementById("start-overlay").style.display = "none";
+        document.getElementById("monitor-header").style.display = "flex";
+        document.getElementById("exam-container").style.display = "block";
+        document.getElementById("user-display").innerText = `Thí sinh: ${currentUserEmail}`;
+        
+        // Bật toàn màn hình
+        if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+        
+        // Khóa chuột phải, chống sao chép sao chép
+        const lock = (e) => e.preventDefault();
+        ['contextmenu', 'copy', 'paste', 'cut'].forEach(evt => document.addEventListener(evt, lock));
+
+        // Phát hiện chuyển tab
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                violationCount++;
+                document.getElementById('violation-msg').innerText = `Số lần chuyển tab: ${violationCount}/3`;
+                alert("CẢNH BÁO: Không được chuyển tab rời khỏi bài thi!");
+                if(violationCount >= 3) { alert("Bạn vi phạm quá 3 lần. Hệ thống tự động nộp bài."); épBuộcNộpBài(); }
+            }
+        });
+
+        // Tải đề thi
+        let res = await fetch(`${API_URL}?action=getExam`);
+        let result = await res.json();
+        renderQuestions(result.data);
+    }
+
+    function renderQuestions(sections) {
+        let html = '';
+        sections.forEach((sec, sIdx) => {
+            html += `<h3>Phần ${sIdx+1}: ${sec.sectionTitle}</h3>`;
+            sec.questions.forEach(q => {
+                html += `<div class="question-box"><p><b>${q.title}</b></p>`;
+                if(q.type === 'multiple_choice') {
+                    q.choices.forEach(c => { html += `<label class="choice-label"><input type="radio" name="${q.id}" value="${c}"> ${c}</label>`; });
+                } else {
+                    html += `<textarea name="${q.id}" rows="3" placeholder="Nhập câu trả lời..."></textarea>`;
+                }
+                html += `</div>`;
+            });
+        });
+        html += `<button class="btn" style="background:#2e7d32;" onclick="épBuộcNộpBài()">NỘP BÀI THI</button>`;
+        document.getElementById("exam-container").innerHTML = html;
+    }
+
+    async function épBuộcNộpBài() {
+        let answers = {};
+        document.querySelectorAll('[name^="q_"]').forEach(input => {
+            if(input.type === 'radio' && !input.checked) return;
+            answers[input.name] = input.value;
+        });
+
+        let res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "submitExam", email: currentUserEmail, answers: answers }) });
+        let data = await res.json();
+        alert("Bài thi đã gửi thành công về hệ thống an toàn!");
+        window.location.reload();
+    }
+</script>
+</body>
+</html>
