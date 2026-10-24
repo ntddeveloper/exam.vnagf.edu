@@ -70,9 +70,7 @@
         <h2 style="text-align: center; color: #555;">Đang tải đề thi an toàn...</h2>
     </div>
 <script>
-    // Link Web App Apps Script của bạn đã được tích hợp chuẩn xác
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxh62HBTEb2Sj1bisyTUQck_I826Og0sYmolRuO212XIeq58TjGALwbudtJI-dToyBm/exec';
-    
+    const API_URL = 'https://google.com';
     let isRegisterMode = false;
     let currentUserEmail = "";
     let violationCount = 0;
@@ -108,8 +106,7 @@
         }
 
         try {
-            // Ép kiểu text/plain để giải quyết triệt để bộ chặn CORS trên các trình duyệt bảo mật
-            let res = await fetch(API_URL, {
+            await fetch(API_URL, {
                 method: "POST",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify(payload)
@@ -126,21 +123,20 @@
                     if (data.role === "student") {
                         document.getElementById("start-overlay").style.display = "flex";
                     } else {
-                        alert("Xin chào Giảng viên! Hãy kiểm tra dữ liệu chấm thi trong email.");
+                        alert("Xin chào Giảng viên!");
                         document.getElementById("exam-container").style.display = "block";
-                        document.getElementById("exam-container").innerHTML = "<h2>Khu vực Giảng viên</h2><p>Hệ thống quản lý điểm thi được gửi về Email của bạn.</p>";
+                        document.getElementById("exam-container").innerHTML = "<h2>Khu vực Giảng viên</h2><p>Hệ thống đã gửi thông tin về email của bạn.</p>";
                     }
                 } else {
                     alert(data.message);
                 }
             }
         } catch (err) {
-            // Khi dùng mode không CORS để đăng ký, trình duyệt có thể nhảy vào catch nhưng dữ liệu vẫn lên máy chủ Google thành công
             if(isRegisterMode) {
-                alert("Yêu cầu đăng ký đã gửi lên hệ thống!\nHãy thông báo cho chủ quản web phê duyệt hòm thư.");
+                alert("Yêu cầu đăng ký đã được gửi lên hệ thống máy chủ!\nHãy kiểm tra hòm thư Gmail để phê duyệt.");
                 toggleAuthMode();
             } else {
-                alert("Lỗi kết nối máy chủ hoặc tài khoản chưa được phê duyệt!");
+                alert("Lỗi kết nối hoặc tài khoản chưa được phê duyệt!");
             }
         } finally {
             resetBtn();
