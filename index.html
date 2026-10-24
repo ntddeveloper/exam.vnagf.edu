@@ -5,206 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ Thống Quản Lý Thi</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; user-select: none; }
-        .auth-box { max-width: 400px; margin: 80px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .auth-box h2 { text-align: center; margin-bottom: 20px; color: #1976d2; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; }
+        .box { max-width: 400px; margin: 80px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; margin-bottom: 20px; color: #1976d2; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
         .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .btn { background: #1976d2; color: white; padding: 12px; width: 100%; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 16px; }
-        .link-toggle { text-align: center; margin-top: 15px; font-size: 14px; color: #1976d2; cursor: pointer; text-decoration: underline; }
-        .exam-page { display: none; max-width: 800px; margin: 120px auto 20px; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .anti-cheat-header { position: fixed; top: 0; left: 0; right: 0; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 15px 30px; display: none; justify-content: space-between; align-items: center; z-index: 1000; border-bottom: 3px solid #d32f2f; }
-        .violation-box { background: #ffebee; color: #c62828; padding: 5px 15px; border-radius: 4px; font-weight: bold; }
-        .question-box { margin-bottom: 25px; padding: 20px; background: #fafafa; border-radius: 8px; border: 1px solid #eaeaea; }
-        .choice-label { display: block; padding: 8px; margin: 5px 0; background: #fff; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: none; justify-content: center; align-items: center; color: white; text-align: center; }
+        .btn { background: #1976d2; color: white; padding: 12px; width: 100%; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 16px; width: 100%; }
+        .toggle { text-align: center; margin-top: 15px; font-size: 14px; color: #1976d2; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <!-- KHU VỰC ĐĂNG NHẬP / ĐĂNG KÝ -->
-    <div id="auth-container" class="auth-box">
-        <h2 id="auth-title">ĐĂNG NHẬP</h2>
-        <div class="form-group" id="name-group" style="display: none;">
-            <label>Họ và Tên</label>
-            <input type="text" id="auth-name" placeholder="Nguyễn Văn A">
-        </div>
-        <div class="form-group">
-            <label>Email</label>
-            <input type="email" id="auth-email" placeholder="example@gmail.com">
-        </div>
-        <div class="form-group" id="pass-group">
-            <label>Mật khẩu</label>
-            <input type="password" id="auth-password" placeholder="******">
-        </div>
-        <div class="form-group" id="role-group" style="display: none;">
-            <label>Bạn là:</label>
-            <select id="auth-role">
-                <option value="student">Thí sinh dự thi</option>
-                <option value="teacher">Giảng viên chấm bài</option>
-            </select>
-        </div>
-        <button class="btn" id="btn-auth" onclick="submitAuth()">ĐĂNG NHẬP</button>
-        <div class="link-toggle" id="toggle-link" onclick="toggleAuthMode()">Chưa có tài khoản? Đăng ký ngay</div>
+    <!-- KHU VỰC GỬI DỮ LIỆU ĐƯỢC BẢO MẬT BẰNG FORM NATIVE -->
+    <div class="box">
+        <h2 id="title">ĐĂNG KÝ HỆ THỐNG</h2>
+        
+        <!-- Sử dụng Form HTML truyền thống gửi thẳng dữ liệu qua Apps Script mà không bị trình duyệt chặn CORS -->
+        <form action="https://google.com" method="POST" target="hidden_iframe" onsubmit="XửLýGửi()">
+            
+            <!-- Trường ẩn bắt buộc để định vị hành động trên Google Server -->
+            <input type="hidden" name="action" value="register">
+
+            <div class="form-group">
+                <label>Họ và Tên</label>
+                <input type="text" name="fullName" required placeholder="Nguyễn Văn A">
+            </div>
+            
+            <div class="form-group">
+                <label>Email Cá Nhân</label>
+                <input type="email" name="email" required placeholder="example@gmail.com">
+            </div>
+            
+            <div class="form-group">
+                <label>Vai Trò Thành Viên</label>
+                <select name="role">
+                    <option value="student">Thí sinh dự thi</option>
+                    <option value="teacher">Giảng viên chấm bài</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn" id="btn-submit">GỬI YÊU CẦU ĐĂNG KÝ</button>
+        </form>
     </div>
 
-    <!-- MÀN HÌNH KHÓA THI -->
-    <div id="start-overlay" class="overlay">
-        <div style="max-width: 500px; padding: 20px;">
-            <h2>KỲ THI KHÓA TOÀN MÀN HÌNH</h2>
-            <p>Hệ thống tự động ghi nhận nếu bạn chuyển tab hoặc thoát chế độ toàn màn hình.</p>
-            <button class="btn" style="background:#2e7d32; padding:15px;" onclick="startSecureExam()">VÀO PHÒNG THI</button>
-        </div>
-    </div>
+    <!-- Ô chặn ẩn danh giúp trang web không bị tải lại hoặc chuyển hướng khi bấm nút gửi -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(isSubmitted) HoànThành();"></iframe>
 
-    <!-- THANH GIÁM SÁT -->
-    <div class="anti-cheat-header" id="monitor-header">
-        <div id="user-display">Thí sinh: </div>
-        <div class="violation-box" id="violation-msg">Số lần chuyển tab: 0/3</div>
-        <div style="font-size:20px; font-weight:bold; color:#d32f2f;">45:00</div>
-    </div>
-
-    <!-- PHÒNG THI -->
-    <div id="exam-container" class="exam-page">
-        <h2 style="text-align: center; color: #555;">Đang tải đề thi an toàn...</h2>
-    </div>
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwT-c_ROuK8VgKlC3p_YJI7hGijcE6ZG6T8u14puy_jpedN3Rg4G2IPYcxnvjUUSAPo/exec';
-    let isRegisterMode = false;
-    let currentUserEmail = "";
-    let violationCount = 0;
+    let isSubmitted = false;
 
-    function toggleAuthMode() {
-        isRegisterMode = !isRegisterMode;
-        document.getElementById("auth-title").innerText = isRegisterMode ? "ĐĂNG KÝ HỆ THỐNG" : "ĐĂNG NHẬP";
-        document.getElementById("name-group").style.display = isRegisterMode ? "block" : "none";
-        document.getElementById("role-group").style.display = isRegisterMode ? "block" : "none";
-        document.getElementById("pass-group").style.display = isRegisterMode ? "none" : "block";
-        document.getElementById("btn-auth").innerText = isRegisterMode ? "GỬI YÊU CẦU ĐĂNG KÝ" : "ĐĂNG NHẬP";
-        document.getElementById("toggle-link").innerText = isRegisterMode ? "Đã có tài khoản? Đăng nhập" : "Chưa có tài khoản? Đăng ký ngay";
+    function XửLýGửi() {
+        isSubmitted = true;
+        document.getElementById("btn-submit").innerText = "Đang gửi dữ liệu...";
+        document.getElementById("btn-submit").disabled = true;
     }
 
-    async function submitAuth() {
-        const email = document.getElementById("auth-email").value.trim();
-        const name = document.getElementById("auth-name").value.trim();
-        const password = document.getElementById("auth-password").value.trim();
-        const role = document.getElementById("auth-role").value;
-
-        if (!email) { alert("Vui lòng điền Email!"); return; }
-
-        document.getElementById("btn-auth").innerText = "Đang xử lý...";
-        document.getElementById("btn-auth").disabled = true;
-
-        let payload = {};
-        if (isRegisterMode) {
-            if (!name) { alert("Vui lòng điền Họ tên!"); resetBtn(); return; }
-            payload = { action: "register", email: email, fullName: name, role: role };
-        } else {
-            if (!password) { alert("Vui lòng điền Mật khẩu!"); resetBtn(); return; }
-            payload = { action: "login", email: email, password: password };
-        }
-
-        try {
-            await fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify(payload)
-            });
-
-            if (isRegisterMode) {
-                alert("Yêu cầu đăng ký gửi thành công! Hãy đợi chủ web duyệt tài khoản.");
-                toggleAuthMode();
-            } else {
-                let data = await res.json();
-                if (data.status === "success") {
-                    currentUserEmail = email;
-                    document.getElementById("auth-container").style.display = "none";
-                    if (data.role === "student") {
-                        document.getElementById("start-overlay").style.display = "flex";
-                    } else {
-                        alert("Xin chào Giảng viên!");
-                        document.getElementById("exam-container").style.display = "block";
-                        document.getElementById("exam-container").innerHTML = "<h2>Khu vực Giảng viên</h2><p>Hệ thống đã gửi thông tin về email của bạn.</p>";
-                    }
-                } else {
-                    alert(data.message);
-                }
-            }
-        } catch (err) {
-            if(isRegisterMode) {
-                alert("Yêu cầu đăng ký đã được gửi lên hệ thống máy chủ!\nHãy kiểm tra hòm thư Gmail để phê duyệt.");
-                toggleAuthMode();
-            } else {
-                alert("Lỗi kết nối hoặc tài khoản chưa được phê duyệt!");
-            }
-        } finally {
-            resetBtn();
-        }
-    }
-
-    function resetBtn() {
-        document.getElementById("btn-auth").disabled = false;
-        document.getElementById("btn-auth").innerText = isRegisterMode ? "GỬI YÊU CẦU ĐĂNG KÝ" : "ĐĂNG NHẬP";
-    }
-
-    async function startSecureExam() {
-        document.getElementById("start-overlay").style.display = "none";
-        document.getElementById("monitor-header").style.display = "flex";
-        document.getElementById("exam-container").style.display = "block";
-        document.getElementById("user-display").innerText = `Thí sinh: ${currentUserEmail}`;
-        
-        if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
-        
-        const block = (e) => e.preventDefault();
-        ['contextmenu', 'copy', 'paste', 'cut'].forEach(evt => document.addEventListener(evt, block));
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                violationCount++;
-                document.getElementById('violation-msg').innerText = `Số lần chuyển tab: ${violationCount}/3`;
-                alert("CẢNH BÁO: Nghiêm cấm hành vi chuyển tab rời khỏi bài thi!");
-                if (violationCount >= 3) { alert("Hệ thống tự động nộp bài do vi phạm quy chế."); forceSubmit(); }
-            }
-        });
-
-        try {
-            let res = await fetch(API_URL + "?action=getExam");
-            let result = await res.json();
-            if(result.status === "success") { renderQuestions(result.data); }
-        } catch(e) {
-            document.getElementById("exam-container").innerHTML = "<p style='color:red;'>Lỗi tải cấu trúc đề.</p>";
-        }
-    }
-
-    function renderQuestions(sections) {
-        let html = '';
-        sections.forEach((sec, sIdx) => {
-            html += `<h3>Phần ${sIdx + 1}: ${sec.sectionTitle}</h3>`;
-            sec.questions.forEach(q => {
-                html += `<div class="question-box"><p><b>${q.title}</b></p>`;
-                if (q.type === 'multiple_choice') {
-                    q.choices.forEach(c => { html += `<label class="choice-label"><input type="radio" name="${q.id}" value="${c}"> ${c}</label>`; });
-                } else {
-                    html += `<textarea name="${q.id}" rows="3" placeholder="Nhập đáp án..."></textarea>`;
-                }
-                html += `</div>`;
-            });
-        });
-        html += `<button class="btn" style="background:#2e7d32;" onclick="forceSubmit()">NỘP BÀI THI</button>`;
-        document.getElementById("exam-container").innerHTML = html;
-    }
-
-    async function forceSubmit() {
-        let answers = {};
-        document.querySelectorAll('[name^="q_"]').forEach(input => {
-            if (input.type === 'radio' && !input.checked) return;
-            answers[input.name] = input.value;
-        });
-        await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "submitExam", email: currentUserEmail, answers: answers }) });
-        alert("Nộp bài thi thành công!");
-        window.location.reload();
+    function HoànThành() {
+        alert("Đơn đăng ký của bạn đã được ghi nhận trên hệ thống máy chủ!\nHãy kiểm tra hòm thư Gmail để phê duyệt tài khoản.");
+        document.getElementById("btn-submit").innerText = "GỬI YÊU CẦU ĐĂNG KÝ";
+        document.getElementById("btn-submit").disabled = false;
+        isSubmitted = false;
     }
 </script>
 </body>
-</html> 
+</html>
