@@ -3,104 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Thi Trực Tuyến Bảo Mật</title>
+    <title>Hệ Thống Thi Trực Tuyến Bảo Mật - BÀI THI TỐT NGHIỆP SĨ QUAN</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; user-select: none; -webkit-user-select: none; }
         .box { max-width: 600px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h2 { text-align: center; margin-bottom: 20px; color: #1976d2; }
+        h2 { text-align: center; margin-bottom: 20px; color: #d32f2f; text-transform: uppercase; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .btn { background: #1976d2; color: white; padding: 12px; width: 100%; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 16px; width: 100%; }
-        .btn:hover { background: #1565c0; }
+        .btn { background: #d32f2f; color: white; padding: 12px; width: 100%; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 16px; width: 100%; }
+        .btn:hover { background: #b71c1c; }
         .exam-page { display: none; max-width: 800px; margin: 120px auto 20px; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .anti-cheat-header { position: fixed; top: 0; left: 0; right: 0; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 15px 30px; display: none; justify-content: space-between; align-items: center; z-index: 1000; border-bottom: 3px solid #d32f2f; }
         .violation-box { background: #ffebee; color: #c62828; padding: 5px 15px; border-radius: 4px; font-weight: bold; }
         .question-box { margin-bottom: 25px; padding: 20px; background: #fafafa; border-radius: 8px; border: 1px solid #eaeaea; }
+        .rules-box { background: #fffde7; border-left: 5px solid #fbc02d; padding: 15px; margin-bottom: 20px; border-radius: 4px; font-size: 14px; }
         .choice-label { display: block; padding: 8px; margin: 5px 0; background: #fff; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; color: white; text-align: center; }
     </style>
 </head>
 <body>
 
-    <!-- MÀN HÌNH PHIẾU ĐIỀN THÔNG TIN ĐẦU VÀO -->
+    <!-- MÀN HÌNH ĐIỀN PHIẾU THÔNG TIN THÍ SINH ĐẦU VÀO -->
     <div id="info-overlay" class="overlay">
         <div class="box" style="color: #333; text-align: left; max-width: 500px;">
-            <h2>PHIẾU THÔNG TIN THÍ SINH</h2>
-            <p style="color: #d32f2f; font-weight: bold; text-align: center; font-size: 14px;">Hệ thống sẽ kích hoạt tính năng khóa bảo mật, chặn chuyển tab và ép toàn màn hình ngay khi bắt đầu làm bài.</p>
-            
-            <div class="form-group">
-                <label>Tên Discord</label>
-                <input type="text" id="input-discord" placeholder="Ví dụ: ntddeveloper" required>
-            </div>
-            <div class="form-group">
-                <label>Tên Roblox</label>
-                <input type="text" id="input-roblox" placeholder="Nhập tên tài khoản Roblox..." required>
-            </div>
-            <div class="form-group">
-                <label>Chức vụ</label>
-                <input type="text" id="input-chucvu" placeholder="Ví dụ: Trưởng phòng, Thành viên..." required>
-            </div>
-            <div class="form-group">
-                <label>Quân hàm</label>
-                <input type="text" id="input-quanham" placeholder="Ví dụ: Hạ sĩ, Trung úy..." required>
-            </div>
-            <div class="form-group">
-                <label>Đơn vị</label>
-                <input type="text" id="input-donvi" placeholder="Ví dụ: Đội 1, Tiểu đoàn 2..." required>
+            <h2>PHIẾU THÔNG TIN KHỞI TẠO</h2>
+            <div class="rules-box">
+                <b>CHÚ Ý QUY CHẾ GIÁM SÁT:</b><br>
+                Hệ thống thi độc lập sẽ tự động khóa toàn màn hình, vô hiệu hóa chuột phải/sao chép đề bài. <b>Nếu cố tình đổi tab tra cứu dữ liệu quá 3 lần, bài thi sẽ bị thu và hủy ngay lập tức.</b>
             </div>
             
-            <button class="btn" style="background:#2e7d32; padding:15px; margin-top:10px;" onclick="kichHoatVaoThi()">XÁC NHẬN VÀ BẮT ĐẦU LÀM BÀI</button>
+            <div class="form-group">
+                <label>Tên Discord *</label>
+                <input type="text" id="input-discord" placeholder="Nhập tên Discord..." required>
+            </div>
+            <div class="form-group">
+                <label>Tên Roblox *</label>
+                <input type="text" id="input-roblox" placeholder="Nhập tên Roblox..." required>
+            </div>
+            <div class="form-group">
+                <label>Chức vụ *</label>
+                <input type="text" id="input-chucvu" placeholder="Ví dụ: Giảng viên, Học viên..." required>
+            </div>
+            <div class="form-group">
+                <label>Quân hàm *</label>
+                <input type="text" id="input-quanham" placeholder="Ví dụ: Thiếu úy, Thượng sĩ..." required>
+            </div>
+            <div class="form-group">
+                <label>Đơn vị *</label>
+                <input type="text" id="input-donvi" placeholder="Ví dụ: Đại đội 1, Tiểu đoàn 3..." required>
+            </div>
+            
+            <button class="btn" style="background:#2e7d32; padding:15px; margin-top:10px;" onclick="kichHoatHeThongThi()">XÁC NHẬN & VÀO PHÒNG THI BẢO MẬT</button>
         </div>
     </div>
 
-    <!-- THANH TRẠNG THÁI GIÁM SÁT KHI THI -->
+    <!-- THANH TRẠNG THÁI GIÁM SÁT GẮN CỐ ĐỊNH PHÍA TRÊN -->
     <div class="anti-cheat-header" id="monitor-header">
         <div id="user-display">Thí sinh: </div>
-        <div class="violation-box" id="violation-msg">Số lần chuyển tab: 0/3</div>
-        <div style="font-size:20px; font-weight:bold; color:#d32f2f;">Thời gian làm bài: 45:00</div>
+        <div class="violation-box" id="violation-msg">Số lần vi phạm chuyển tab: 0/3</div>
+        <div style="font-size:20px; font-weight:bold; color:#d32f2f;">Thời gian: 45:00</div>
     </div>
 
-    <!-- PHÒNG THI CHÍNH THỨC (DỮ LIỆU ĐƯỢC ĐẨY THẲNG VỀ TRANG CHẤM ĐIỂM GOOGLE FORM GỐC) -->
+    <!-- PHÒNG THI BẢO MẬT ĐỘC LẬP -->
     <div id="exam-container" class="exam-page">
+        <h2>BÀI THI TỐT NGHIỆP SĨ QUAN</h2>
         
-        <!-- BẠN THAY LINK ĐƯỜNG DẪN FORM GỐC CỦA BẠN VÀO CHỖ ACTION NÀY (ĐỔI ĐUÔI /EDIT THÀNH /FORMRESPONSE) -->
-        <form id="google-form" action="https://google.com" method="POST" target="hidden_iframe" onsubmit="xuLyGuiForm()">
+        <form id="google-form" action="https://google.com" method="POST" target="hidden_iframe" onsubmit="xuLyNopBai()">
             
-            <!-- Bộ trường ẩn tự động nhận dữ liệu từ phiếu thông tin thí sinh -->
-            <input type="hidden" id="form-discord" name="entry.111111111" value=""> <!-- Sửa mã entry của Tên Discord -->
-            <input type="hidden" id="form-roblox" name="entry.222222222" value=""> <!-- Sửa mã entry của Tên Roblox -->
-            <input type="hidden" id="form-chucvu" name="entry.333333333" value=""> <!-- Sửa mã entry của Chức vụ -->
-            <input type="hidden" id="form-quanham" name="entry.444444444" value=""> <!-- Sửa mã entry của Quân hàm -->
-            <input type="hidden" id="form-donvi" name="entry.555555555" value="">   <!-- Sửa mã entry của Đơn vị -->
+            <!-- Bộ trường ẩn tự động nhận mã Entry ID bạn đã bóc tách được -->
+            <input type="hidden" id="form-discord" name="entry.1837826550" value="">
+            <input type="hidden" id="form-roblox" name="entry.2117582019" value="">
+            
+            <!-- Hai câu xác nhận quy chế bắt buộc có trên Form gốc (Tự động chọn Yes để qua trang điền thông tin) -->
+            <input type="hidden" name="entry.ĐIỀN_MÃ_SỐ_CỦA_CÂU_Are_you_ready_TẠI_ĐÂY" value="Yes">
+            <input type="hidden" name="entry.ĐIỀN_MÃ_SỐ_CỦA_CÂU_Have_you_read_TẠI_ĐÂY" value="Yes">
 
-            <!-- VÙNG CÂU HỎI THI THỰC TẾ TRÊN FORM CỦA BẠN -->
-            <!-- Bạn chỉ cần thay tên các câu hỏi và sửa mã entry.xxx tương ứng với form của bạn -->
+            <div class="rules-box" style="color: #555;">
+                <b>YÊU CẦU LÀM BÀI CHÍNH THỨC:</b> Trả lời bằng tiếng Anh, tối thiểu 4 dòng, sử dụng chủ ngữ "Tôi", tuyệt đối không viết tắt và kiểm tra chính tả nghiêm ngặt trước khi hoàn thành bài.
+            </div>
+
+            <!-- VÙNG ĐIỀN THÔNG TIN BỔ SUNG GỬI KÈM VỀ TRANG CHẤM ĐIỂM -->
             <div class="question-box">
-                <p><b>Câu hỏi 1: Nhập nội dung câu hỏi trắc nghiệm hoặc tự luận của bạn tại đây?</b></p>
-                <textarea name="entry.666666666" rows="3" placeholder="Nhập câu trả lời bài làm của bạn..." required></textarea>
+                <p><b>Thông tin bổ sung: Chức vụ, Quân hàm và Đơn vị của bạn (Hệ thống tự động nối chuỗi)</b></p>
+                <input type="text" id="display-metadata" readonly style="background: #eee; font-weight: bold; color: #555;">
+                <input type="hidden" id="form-metadata-send" name="entry.MÃ_ENTRY_MỘT_CÂU_TỰ_LUẬN_BẤT_KỲ_ĐỂ_LƯU_CHỨC_VỤ_QUÂN_HÀM" value="">
+            </div>
+
+            <!-- NỘI DUNG CÁC CÂU HỎI THI TỰ LUẬN TỐT NGHIỆP CỦA BẠN -->
+            <div class="question-box">
+                <p><b>MÃ CÂU THI SỐ 01: [Bạn nhập nội dung đề bài thi Sĩ quan bằng tiếng Anh tại đây] *</b></p>
+                <textarea name="entry.MÃ_ENTRY_CỦA_CÂU_HỎI_1_TẠI_ĐÂY" rows="5" placeholder="Answers must be at least 4 lines long..." required></textarea>
             </div>
 
             <div class="question-box">
-                <p><b>Câu hỏi 2: Lựa chọn đáp án đúng của câu này?</b></p>
-                <label class="choice-label"><input type="radio" name="entry.777777777" value="Đáp án A" required> Đáp án A</label>
-                <label class="choice-label"><input type="radio" name="entry.777777777" value="Đáp án B"> Đáp án B</label>
-                <label class="choice-label"><input type="radio" name="entry.777777777" value="Đáp án C"> Đáp án C</label>
+                <p><b>MÃ CÂU THI SỐ 02: [Bạn nhập nội dung đề bài thi Sĩ quan tiếp theo tại đây] *</b></p>
+                <textarea name="entry.MÃ_ENTRY_CỦA_CÂU_HỎI_2_TẠI_ĐÂY" rows="5" placeholder="Answers must be at least 4 lines long..." required></textarea>
             </div>
 
-            <button type="submit" class="btn" style="background:#2e7d32; margin-top:20px;">NỘP BÀI THI CHÍNH THỨC</button>
+            <button type="submit" class="btn" style="background:#2e7d32; font-size: 18px; padding: 15px;">HOÀN THÀNH VÀ NỘP BÀI THI TỐT NGHIỆP</button>
         </form>
     </div>
 
-    <!-- Iframe ẩn giúp lưu bài trực tiếp về Google Form mà không bị chuyển hoặc load lại trang web -->
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(isSubmitted) nopBaiThanhCong();"></iframe>
-
 <script>
     let violationCount = 0;
     let isSubmitted = false;
     let isExamRunning = false;
 
-    function kichHoatVaoThi() {
+    function kichHoatHeThongThi() {
         const dc = document.getElementById("input-discord").value.trim();
         const rb = document.getElementById("input-roblox").value.trim();
         const cv = document.getElementById("input-chucvu").value.trim();
@@ -108,54 +119,57 @@
         const dv = document.getElementById("input-donvi").value.trim();
 
         if (!dc || !rb || !cv || !qh || !dv) {
-            alert("Vui lòng điền đầy đủ tất cả các trường trên phiếu thông tin!");
+            alert("Vui lòng hoàn thành đầy đủ Phiếu thông tin trước khi mở đề!");
             return;
         }
 
-        // Đồng bộ dữ liệu phiếu thông tin vào Form gửi ngầm về trang chấm điểm
+        // Đồng bộ dữ liệu phiếu thông tin vào các input gửi ngầm
         document.getElementById("form-discord").value = dc;
         document.getElementById("form-roblox").value = rb;
-        document.getElementById("form-chucvu").value = cv;
-        document.getElementById("form-quanham").value = qh;
-        document.getElementById("form-donvi").value = dv;
+        
+        const metadataString = `Chức vụ: ${cv} | Quân hàm: ${qh} | Đơn vị: ${dv}`;
+        document.getElementById("display-metadata").value = metadataString;
+        document.getElementById("form-metadata-send").value = metadataString;
 
         document.getElementById("user-display").innerText = `Thí sinh: ${rb} (${dc})`;
 
-        // Ẩn phiếu thông tin, mở giao diện làm bài thi
+        // Gỡ màn hình chờ, kích hoạt giao diện làm bài khóa trình duyệt
         document.getElementById("info-overlay").style.display = "none";
         document.getElementById("monitor-header").style.display = "flex";
         document.getElementById("exam-container").style.display = "block";
         isExamRunning = true;
 
-        // KÍCH HOẠT BẢO MẬT CHỐNG GIAN LẬN TOÀN DIỆN
-        // 1. Ép toàn màn hình (Fullscreen API)
-        if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
+        // KÍCH HOẠT BỘ KHÓA TRÌNH DUYỆT CHỐNG GIAN LẬN NÂNG CAO
+        // 1. Buộc bật chế độ toàn màn hình (Fullscreen API)
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(()=>{});
+        }
         
-        // 2. Vô hiệu hóa chuột phải, chặn copy câu hỏi, chặn paste tài liệu
-        const blockEvent = (e) => e.preventDefault();
-        ['contextmenu', 'copy', 'paste', 'cut'].forEach(evt => document.addEventListener(evt, blockEvent));
+        // 2. Chặn hoàn toàn chuột phải, chặn sao chép đề bài, chặn dán tài liệu chuẩn bị sẵn
+        const preventAction = (e) => e.preventDefault();
+        ['contextmenu', 'copy', 'paste', 'cut'].forEach(evt => document.addEventListener(evt, preventAction));
 
-        // 3. Theo dõi hành vi đổi hướng màn hình hoặc bật tab mới tra cứu cứu tài liệu Google
+        // 3. Theo dõi sát sao hành vi đổi tab sang Google hoặc bật công cụ trợ lý ảo AI
         document.addEventListener('visibilitychange', () => {
             if (document.hidden && isExamRunning) {
                 violationCount++;
-                document.getElementById('violation-msg').innerText = `Số lần chuyển tab: ${violationCount}/3`;
-                alert("HỆ THỐNG CẢNH BÁO:\nNghiêm cấm hành vi chuyển tab rời khỏi bài thi!");
+                document.getElementById('violation-msg').innerText = `Số lần vi phạm chuyển tab: ${violationCount}/3`;
+                alert("HỆ THỐNG CẢNH BÁO CẤM GIAN LẬN:\nBạn vừa rời khỏi phòng thi! Vi phạm quy chế.");
                 if (violationCount >= 3) {
-                    alert("Bạn đã vi phạm quy chế thi quá 3 lần. Hệ thống tiến hành khóa bài và tự động nộp kết quả.");
-                    document.getElementById("google-form").submit(); // Tự động kích hoạt lệnh nộp bài ép buộc
+                    alert("Bạn vi phạm quá 3 lần quy định. Hệ thống tự động thu bài và khóa quyền làm bài ngay lập tức.");
+                    document.getElementById("google-form").submit(); // Tự động nộp bài ép buộc
                 }
             }
         });
     }
 
-    function xuLyGuiForm() {
+    function xuLyNopBai() {
         isSubmitted = true;
         isExamRunning = false;
     }
 
     function nopBaiThanhCong() {
-        alert("Nộp bài thi thành công!\nToàn bộ phiếu thông tin và câu trả lời đã được lưu trữ an toàn trên trang chấm điểm.");
+        alert("Nộp bài thi thành công!\nToàn bộ phiếu thông tin và bài làm Sĩ quan đã được lưu trữ an toàn trên trang quản lý.");
         window.location.reload();
     }
 </script>
